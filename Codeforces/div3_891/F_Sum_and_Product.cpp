@@ -56,100 +56,59 @@ int mul(int a,int b)
     return ret;
 }
 
+bool checksqrt(int a)
+{
+    return (int)sqrtl((long double)a)*(int)sqrtl((long double)a)==a;
+}
 void solve()
 {
-    int n,m,k;
-    cin >> n >> m >> k;
-    vector<int> a(k);
-    for(int i=0;i<k;i++)
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    map<int,int> mp;
+    for(int i=0;i<n;i++)
     {
         cin >> a[i];
+        mp[a[i]]++;
     }
-    sort(all(a));
-    reverse(all(a));
-    bool flag=1;
-    int cnt=0;
-    bool more2=0;
-    for(int i=0;i<k;i++)
+    int q;
+    cin >> q;
+    while(q--)
     {
-        if(cnt>=m)
+        int sum,prod;
+        cin >> sum >> prod;
+        int s=sum*sum-4*prod;
+        if(s>=0)
         {
-            break;
-        }
-        int take=a[i]/n;
-        if(take<2)
-        {
-            continue;
-        }
-        if(take>2)
-        {
-            more2=1;
-        }
-        if(cnt+take>m)
-        {
-            if(more2 or take>2)
+            if(checksqrt(s))
             {
-                cnt=m;
-                break;
+                int ans=0;
+                if((sum+(int)sqrtl((long double)s))%2==0)
+                {
+                    int x=(sum+(int)sqrtl((long double)s))/2;
+                    int y=sum-x;
+                    if(x==y)
+                    {
+                        ans+=mp[x]*(mp[y]-1)/2;
+                    }
+                    else
+                    {
+                        ans+=mp[x]*mp[y];
+                    }
+                }
+                cout << ans << ' ';
             }
             else
             {
-                continue;
+                cout << "0 ";
             }
         }
-        cnt+=take;
-    }
-    if(cnt<m)
-    {
-        flag=0;
-    }
-    if(flag)
-    {
-        cout << "Yes\n";
-        return;
-    }
-    flag=1;
-    cnt=0;
-    more2=0;
-    for(int i=0;i<k;i++)
-    {
-        if(cnt>=n)
+        else
         {
-            break;
+            cout << "0 ";
         }
-        int take=a[i]/m;
-        if(take>2)
-        {
-            more2=1;
-        }
-        if(take<2)
-        {
-            continue;
-        }
-        if(cnt+take>n)
-        {
-            if(more2 or take>2)
-            {
-                cnt=n;
-                break;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        cnt+=take;
     }
-    if(cnt<n)
-    {
-        flag=0;
-    }
-    if(flag)
-    {
-        cout << "Yes\n";
-        return;
-    }
-    cout << "No\n";
+    cout << '\n';
 }
 signed main()
 {

@@ -58,98 +58,32 @@ int mul(int a,int b)
 
 void solve()
 {
-    int n,m,k;
-    cin >> n >> m >> k;
-    vector<int> a(k);
-    for(int i=0;i<k;i++)
+    int n;
+    cin >> n;
+    vector<int> a(n+1),b(n+1);
+    vector<int> dist(n+1);
+    for(int i=1;i<=n;i++)
     {
         cin >> a[i];
     }
-    sort(all(a));
-    reverse(all(a));
-    bool flag=1;
-    int cnt=0;
-    bool more2=0;
-    for(int i=0;i<k;i++)
+    for(int i=1;i<=n;i++)
     {
-        if(cnt>=m)
-        {
-            break;
-        }
-        int take=a[i]/n;
-        if(take<2)
-        {
-            continue;
-        }
-        if(take>2)
-        {
-            more2=1;
-        }
-        if(cnt+take>m)
-        {
-            if(more2 or take>2)
-            {
-                cnt=m;
-                break;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        cnt+=take;
+        cin >> b[i];
+        dist[b[i]]=i;
     }
-    if(cnt<m)
+    for(int i=1;i<=n;i++)
     {
-        flag=0;
-    }
-    if(flag)
-    {
-        cout << "Yes\n";
-        return;
-    }
-    flag=1;
-    cnt=0;
-    more2=0;
-    for(int i=0;i<k;i++)
-    {
-        if(cnt>=n)
+        if(dist[a[i]]>dist[i])
         {
-            break;
+            cout << "-1\n";
+            return;
         }
-        int take=a[i]/m;
-        if(take>2)
-        {
-            more2=1;
-        }
-        if(take<2)
-        {
-            continue;
-        }
-        if(cnt+take>n)
-        {
-            if(more2 or take>2)
-            {
-                cnt=n;
-                break;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        cnt+=take;
     }
-    if(cnt<n)
+    for(int i=1;i<=n;i++)
     {
-        flag=0;
+        cout << dist[i]-dist[a[i]] << ' ';
     }
-    if(flag)
-    {
-        cout << "Yes\n";
-        return;
-    }
-    cout << "No\n";
+    cout << '\n';
 }
 signed main()
 {
