@@ -58,68 +58,30 @@ int mul(int a,int b)
 
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
-    {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
-    }
-    int deg=0;
+    int n,w,h;
+    cin >> n >> w >> h;
+    vector<int> a(n+1,0),b(n+1,0);
     for(int i=1;i<=n;i++)
     {
-        if(sz(adjlist[i])==2)
-        {
-            deg=i;
-            break;
-        }
+        cin >> a[i];
     }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
+    for(int i=1;i<=n;i++)
     {
-        for(auto i:adjlist[u])
-        {
-            if(i!=v)
-            {
-                if(u==deg)
-                {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
-                }
-            }
-        }
-    };
-    if(deg==0)
+        cin >> b[i];
+    }
+    int mx=LLONG_MAX,mn=LLONG_MIN;
+    for(int i=1;i<=n;i++)
     {
-        cout << "NO\n";
+        mx=min(mx,(b[i]-h)-(a[i]-w));
+        mn=max(mn,(b[i]+h)-(a[i]+w));
+    }
+    if(mn<=mx)
+    {
+        cout << "YES\n";
     }
     else
     {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
+        cout << "NO\n";
     }
 }
 signed main()

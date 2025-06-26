@@ -58,75 +58,43 @@ int mul(int a,int b)
 
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
-    {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
-    }
-    int deg=0;
+    int n,x,y;
+    cin >> n >> x >> y;
+    vector<vector<int>> dp(n+1,vector<int>(3005,-LLONG_MAX));
+    vector<pair<int,int>> vp(n+1);
     for(int i=1;i<=n;i++)
     {
-        if(sz(adjlist[i])==2)
+        cin >> vp[i].first >> vp[i].second;
+    }
+    for(int i=0;i<=x;i++)
+    {
+        dp[0][i]=y;
+    }
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=0;j<=x;j++)
         {
-            deg=i;
-            break;
+            dp[i][j]=max(dp[i-1][min(3001LL,j+vp[i].first)],dp[i-1][j]-vp[i].second);
         }
     }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
+    int mx=0;
+    for(int i=1;i<=n;i++)
     {
-        for(auto i:adjlist[u])
+        for(int j=0;j<=x;j++)
         {
-            if(i!=v)
+            if(dp[i][j]>=0)
             {
-                if(u==deg)
-                {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
-                }
+                mx=max(mx,i);
             }
         }
-    };
-    if(deg==0)
-    {
-        cout << "NO\n";
     }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
-    }
+    cout << mx << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

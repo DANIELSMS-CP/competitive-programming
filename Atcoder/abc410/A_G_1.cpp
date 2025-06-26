@@ -60,73 +60,27 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        cin >> a[i];
     }
-    int deg=0;
-    for(int i=1;i<=n;i++)
+    int k,ans=0;
+    cin >> k;
+    for(int i=0;i<n;i++)
     {
-        if(sz(adjlist[i])==2)
+        if(a[i]>=k)
         {
-            deg=i;
-            break;
+            ans++;
         }
     }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
-    {
-        for(auto i:adjlist[u])
-        {
-            if(i!=v)
-            {
-                if(u==deg)
-                {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
-                }
-            }
-        }
-    };
-    if(deg==0)
-    {
-        cout << "NO\n";
-    }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
-    }
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

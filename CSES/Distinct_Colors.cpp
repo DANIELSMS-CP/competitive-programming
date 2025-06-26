@@ -60,73 +60,68 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<vector<int>> adjlist(n+5);
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+    }
+    vector<vector<int>> adjlist(n+1);
     for(int i=0;i<n-1;i++)
     {
         int u,v;
         cin >> u >> v;
+        u--,v--;
         adjlist[u].push_back(v);
         adjlist[v].push_back(u);
     }
-    int deg=0;
-    for(int i=1;i<=n;i++)
+    vector<map<int,int>> mp(n);
+    vector<int> ans(n);
+    auto dfs=[&](auto &&dfs,int u,int v)->void
     {
-        if(sz(adjlist[i])==2)
+        mp[u][a[u]]++;
+        int ssz=sz(mp[u]),sssz=sz(adjlist[u]),mx=u;
+        if(sssz==1 and u!=0)
         {
-            deg=i;
-            break;
+            ans[u]=sz(mp[u]);
+            return;
         }
-    }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
-    {
         for(auto i:adjlist[u])
         {
             if(i!=v)
             {
-                if(u==deg)
+                dfs(dfs,i,u);
+                if(ssz<sz(mp[i]))
                 {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
+                    ssz=sz(mp[i]);
+                    mx=i;
                 }
             }
         }
+        mp[u].swap(mp[mx]);
+        for(auto i:adjlist[u])
+        {
+            if(i!=v)
+            {
+                for(auto [key,val]:mp[i])
+                {
+                    mp[u][key]+=mp[i][key];
+                }
+            }
+        }
+        ans[u]=sz(mp[u]);
     };
-    if(deg==0)
+    dfs(dfs,0,0);
+    for(int i=0;i<n;i++)
     {
-        cout << "NO\n";
+        cout << ans[i] << ' ';
     }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
-    }
+    cout << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

@@ -58,75 +58,45 @@ int mul(int a,int b)
 
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
+    int n,q;
+    cin >> n >> q;
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        a[i]=i+1;
     }
-    int deg=0;
-    for(int i=1;i<=n;i++)
+    int shift=0;
+    while(q--)
     {
-        if(sz(adjlist[i])==2)
+        int c;
+        cin >> c;
+        if(c==1)
         {
-            deg=i;
-            break;
+            int k,l;
+            cin >> k >> l;
+            k--;
+            a[(k+shift)%(n)]=l;
         }
-    }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
-    {
-        for(auto i:adjlist[u])
+        if(c==2)
         {
-            if(i!=v)
-            {
-                if(u==deg)
-                {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
-                }
-            }
+            int kkk;
+            cin >> kkk;
+            kkk--;
+            cout << a[(kkk+shift)%(n)] << '\n';
         }
-    };
-    if(deg==0)
-    {
-        cout << "NO\n";
-    }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
+        if(c==3)
+        {
+            int kk;
+            cin >> kk;
+            shift+=kk;
+        }
     }
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

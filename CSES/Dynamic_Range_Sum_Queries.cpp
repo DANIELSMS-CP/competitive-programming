@@ -56,77 +56,88 @@ int mul(int a,int b)
     return ret;
 }
 
+struct node
+{
+    int s,e,m;
+    int val;
+    node *left,*right;
+    node(int ss,int ee,vector<int> &a)
+    {
+        s=ss,e=ee;
+        m=(s+e)/2;
+        if(s==e)
+        {
+            val=a[e];
+            return;
+        }
+        left=new node(s,m,a);
+        right=new node(m+1,e,a);
+        val=left->val+right->val;
+    }
+    void upd(int p,int v)
+    {
+        if(s==e)
+        {
+            val=v;
+            return;
+        }
+        int m=(s+e)/2;
+        if(p<=m)
+        {
+            left->upd(p,v);
+        }
+        else
+        {
+            right->upd(p,v);
+        }
+        val=left->val+right->val;
+    }
+    int qry(int l,int r)
+    {
+        if(l>e or r<s)
+        {
+            return 0;
+        }
+        if(l<=s and e<=r)
+        {
+            return val;
+        }
+        return left->qry(l,r)+right->qry(l,r);
+    }
+};
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
-    {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
-    }
-    int deg=0;
+    int n,q;
+    cin >> n >> q;
+    vector<int> a(n+1);
     for(int i=1;i<=n;i++)
     {
-        if(sz(adjlist[i])==2)
-        {
-            deg=i;
-            break;
-        }
+        cin >> a[i];
     }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
+    node segtree(1,2*n+5,a);
+    while(q--)
     {
-        for(auto i:adjlist[u])
+        int ty;
+        cin >> ty;
+        if(ty==1)
         {
-            if(i!=v)
-            {
-                if(u==deg)
-                {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
-                }
-                else
-                {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
-                }
-            }
+            int u,v;
+            cin >> u >> v;
+            segtree.upd(u,v);
         }
-    };
-    if(deg==0)
-    {
-        cout << "NO\n";
-    }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
+        else
+        {
+            int l,r;
+            cin >> l >> r;
+            cout << segtree.qry(l,r) << '\n';
+        }
     }
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

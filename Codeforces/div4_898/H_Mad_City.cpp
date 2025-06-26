@@ -58,69 +58,72 @@ int mul(int a,int b)
 
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>> adjlist(n+5);
-    for(int i=0;i<n-1;i++)
+    int n,a,b;
+    cin >> n >> a >> b;
+    vector<vector<int>> adjlist(n+1);
+    for(int i=0;i<n;i++)
     {
         int u,v;
         cin >> u >> v;
         adjlist[u].push_back(v);
         adjlist[v].push_back(u);
     }
-    int deg=0;
-    for(int i=1;i<=n;i++)
+    if(a==b)
     {
-        if(sz(adjlist[i])==2)
-        {
-            deg=i;
-            break;
-        }
+        cout << "NO\n";
+        return;
     }
-    debug(deg)
-    auto dfs=[&](auto &&dfs,int u,int v,bool stat)->void
+    vector<bool> vis(n+1,0),cycle(n+1,0);
+    vector<int> dista(n+1,LLONG_MAX),distb(n+1,LLONG_MAX);
+    auto dfs=[&](auto &&dfs,int u,int v)->bool
     {
+        vis[u]=1;
         for(auto i:adjlist[u])
         {
             if(i!=v)
             {
-                if(u==deg)
+                if(vis[i] or dfs(dfs,i,u))
                 {
-                    if(stat)
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    else
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    deg=0;
-                    dfs(dfs,i,u,stat);
+                    return cycle[u]=1;
                 }
-                else
+            }
+        }
+        return false;
+    };
+    auto bfs=[&](int start,vector<int> &dist)->void
+    {
+        vector<bool> vist(n+1,0);
+        queue<int> q;
+        dist[start]=0;
+        q.push(start);
+        vist[start]=1;
+        while(not q.empty())
+        {
+            int fr=q.front();
+            q.pop();
+            for(auto i:adjlist[fr])
+            {
+                if(not vist[i])
                 {
-                    if(stat)
-                    {
-                        cout << i << ' ' << u << '\n';
-                    }
-                    else
-                    {
-                        cout << u << ' ' << i << '\n';
-                    }
-                    dfs(dfs,i,u,(stat^1));
+                    vist[i]=1;
+                    dist[i]=dist[fr]+1;
+                    q.push(i);
                 }
             }
         }
     };
-    if(deg==0)
+    dfs(dfs,1,1);
+    bfs(a,dista);
+    bfs(b,distb);
+    for(int i=1;i<=n;i++)
     {
-        cout << "NO\n";
+        if(cycle[i] and dista[i]>distb[i])
+        {
+            cout << "YES\n";
+            return;
+        }
     }
-    else
-    {
-        cout << "YES\n";
-        dfs(dfs,1,1,0);
-    }
+    cout << "NO\n";
 }
 signed main()
 {
