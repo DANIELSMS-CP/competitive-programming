@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,40 +56,34 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
-{
-    if(p==0)
-    {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
-    }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    int n,w;
+    cin >> n >> w;
+    vector<int> weight(n+1),value(n+1);
+    for(int i=1;i<=n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> weight[i] >> value[i];
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    // define the dp for this problem
+    // dp(i,j) = max value for item i and weight j
+    // base case = trivial case (easy)
+    // dp[0][j] = 0
+    // dp[i][j] = max(dp[i-1][j],dp[i-1][j-weight[i]]+value[i])
+    // dp[n][w] 
+    vector<vector<int>> dp(n+1,vector<int>(w+1,0));
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=0;j<=w;j++)
+        {
+            dp[i][j]=dp[i-1][j];
+            if(j>=weight[i])
+            {
+                dp[i][j]=max(dp[i][j],dp[i-1][j-weight[i]]+value[i]);
+            }
+        }
+    }
+    cout << dp[n][w] << '\n';
 }
 signed main()
 {

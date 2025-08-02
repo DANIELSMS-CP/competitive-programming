@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,40 +56,63 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
+struct DSU
 {
-    if(p==0)
+    vector<int> par,sz;
+    DSU(int n)
     {
-        return 1;
+        par.resize(n+1,0);
+        sz.resize(n+1,1);
+        for(int i=1;i<=n;i++)
+        {
+            par[i]=i;
+        }
     }
-    if(p==1)
+    int find_par(int u)
     {
-        return a;
+        return par[u]=(u==par[u]?u:find_par(par[u]));
     }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
+    bool merge(int a,int b)
     {
-        return mul(mul(a,pw),pw);
+        int x=find_par(a);
+        int y=find_par(b);
+        if(x==y)
+        {
+            return false;
+        }
+        if(sz[x]>sz[y])
+        {
+            swap(x,y);
+        }
+        par[x]=y;
+        sz[y]+=sz[x];
+        return true;
     }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
+};
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> a[i];
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    DSU dsu(2e5+1);
+    for(int i=0;i<n;i++)
+    {
+        if(a[i]!=a[n-i-1])
+        {
+            dsu.merge(a[i],a[n-i-1]);
+        }
+    }
+    set<int> st,distinct;
+    for(int i=0;i<n;i++)
+    {
+        st.insert(dsu.find_par(a[i]));
+        distinct.insert(a[i]);
+    }
+    cout << sz(distinct)-sz(st) << '\n';
 }
 signed main()
 {

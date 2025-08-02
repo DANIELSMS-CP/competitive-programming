@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,46 +56,47 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
+int find_number(int l,int r,int a)
 {
-    if(p==0)
+    int mx=(r/a)*a;
+    int mn=(l+a-1)/a*a;
+    if(mx<mn)
     {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
+        return 0;
     }
     else
     {
-        return mul(pw,pw);
+        return (mx-mn)/a+1;
     }
 }
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
-    {
-        dp[i]=add(dp[i-1],dp[i-2]);
-    }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    int l,r;
+    cin >> l >> r;
+    int a1=2,a2=3,a3=5,a4=7,b1=6,b2=10,b3=14,b4=15,b5=21,b6=35,c1=30,c2=42,c3=70,c4=105,d1=210;
+    int ans=(r-l+1);
+    ans-=find_number(l,r,a1);
+    ans-=find_number(l,r,a2);
+    ans-=find_number(l,r,a3);
+    ans-=find_number(l,r,a4);
+    ans+=find_number(l,r,b1);
+    ans+=find_number(l,r,b2);
+    ans+=find_number(l,r,b3);
+    ans+=find_number(l,r,b4);
+    ans+=find_number(l,r,b5);
+    ans+=find_number(l,r,b6);
+    ans-=find_number(l,r,c1);
+    ans-=find_number(l,r,c2);
+    ans-=find_number(l,r,c3);
+    ans-=find_number(l,r,c4);
+    ans+=find_number(l,r,d1);
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,46 +56,60 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
-{
-    if(p==0)
-    {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
-    }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> a[i];
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    int m;
+    cin >> m;
+    while(m--)
+    {
+        string s;
+        cin >> s;
+        map<char,int> c;
+        map<int,char> c2;
+        if(sz(s)!=n)
+        {
+            cout << "NO\n";
+            continue;
+        }
+        bool found=0;
+        for(int i=0;i<sz(s);i++)
+        {
+            if(c.find(s[i])==c.end() and c2.find(a[i])==c2.end())
+            {
+                c[s[i]]=a[i];
+                c2[a[i]]=s[i];
+            }
+            else
+            {
+                if(c[s[i]]!=a[i] or c2[a[i]]!=s[i])
+                {
+                    found=1;
+                    break;
+                }
+            }
+        }
+        if(found)
+        {
+            cout << "NO\n";
+        }
+        else
+        {
+            cout << "YES\n";
+        }
+    }
 }
 signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

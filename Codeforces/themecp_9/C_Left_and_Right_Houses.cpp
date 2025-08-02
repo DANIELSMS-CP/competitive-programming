@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,46 +56,48 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
-{
-    if(p==0)
-    {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
-    }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    string s;
+    cin >> s;
+    vector<int> pref(n+2,0);
+    for(int i=1;i<=n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        pref[i]=pref[i-1]+(s[i-1]=='1');
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    int tot=pref[n];
+    pref[n+1]=pref[n];
+    int ans=0;
+    double mn=std::numeric_limits<double>::max();
+    for(int i=0;i<=n;i++)
+    {
+        int left=i-pref[i];
+        int right=tot-pref[i];
+        // cerr << left << ' ' << right << ' ' << (i+1)/2 << ' ' << (n-i+1)/2 << '\n';
+        if(left>=(i+1)/2 and right>=(n-i+1)/2)
+        {
+            double val=abs(n/2.0-i);
+            // cerr << i << ' ' << val << '\n';
+            if(val<mn)
+            {
+                ans=i;
+                mn=val;
+            }
+            else if(val==mn)
+            {
+                ans=min(ans,i);
+            }
+        }
+    }
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

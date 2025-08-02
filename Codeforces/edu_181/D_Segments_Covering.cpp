@@ -60,15 +60,61 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
+struct st{
+    int l,r;
+    mint prob;
+};
 void solve()
 {
-    
+    int n,m;
+    cin >> m >> n;
+    vector<st> a(m+1);
+    for(int i=1;i<=m;i++)
+    {
+        cin >> a[i].l >> a[i].r;
+        int x,y;
+        cin >> x >> y;
+        a[i].prob=x;
+        a[i].prob/=y;
+    }
+    vector<vector<st>> L(n+1),R(n+1);
+    for(int i=1;i<=m;i++)
+    {
+        L[a[i].l].push_back(a[i]);
+        R[a[i].r].push_back(a[i]);
+    }
+    vector<mint> dp(n+1,mint(0));
+    dp[0]=mint(1);
+    vector<mint> notexist(n+1,mint(1));
+    for(int i=1;i<=n;i++)
+    {
+        for(auto stt:L[i])
+        {
+            notexist[i]*=(mint(1)-stt.prob);
+        }
+    }
+    vector<mint> pprod(n+1,mint(1));
+    pprod[0]=1;
+    for(int i=1;i<=n;i++)
+    {
+        pprod[i]*=notexist[i]*pprod[i-1];
+    }
+    for(int i=1;i<=n;i++)
+    {
+        for(auto stt:R[i])
+        {
+            mint ne=pprod[stt.r]/pprod[stt.l-1];
+            ne/=(mint(1)-stt.prob);
+            dp[i]+=(stt.prob*dp[stt.l-1]*ne);
+        }
+    }
+    cout << dp[n] << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

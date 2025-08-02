@@ -56,40 +56,59 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
+int fast_expo(int a,int pw)
 {
-    if(p==0)
+    if(pw==0)
     {
         return 1;
     }
-    if(p==1)
+    if(pw==1)
     {
         return a;
     }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
+    int ml=fast_expo(a,pw/2);
+    if(pw%2)
     {
-        return mul(mul(a,pw),pw);
+        return mul(mul(ml,a),ml);
     }
     else
     {
-        return mul(pw,pw);
+        return mul(ml,ml);
     }
 }
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    vector<int> a(n+1);
+    for(int i=1;i<=n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> a[i];
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    vector<int> mx=a;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j*j<=i;j++)
+        {
+            if(i%j==0)
+            {
+                // cerr << i << ' ' << j << '\n';
+                mx[j]=max(mx[j],a[i]);
+                mx[i/j]=max(mx[i/j],a[i]);
+            }
+        }
+    }
+    sort(mx.begin()+1,mx.end());
+    // for(auto i:mx)
+    // {
+    //     cerr << i << ' ';
+    // }
+    int ans=0;
+    for(int i=1;i<=n;i++)
+    {
+        ans=add(ans,mul(mx[i],fast_expo(2LL,(i-1))));
+    }
+    cout << ans << '\n';
 }
 signed main()
 {

@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,46 +56,35 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
-{
-    if(p==0)
-    {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
-    }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    vector<int> a(n+1);
+    for(int i=1;i<=n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> a[i];
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    multiset<int> pref,suf;
+    for(int i=2;i<=n;i++)
+    {
+        suf.insert(a[i]-i);
+    }
+    pref.insert(a[1]+1);
+    int ans=0;
+    for(int i=2;i<n;i++)
+    {
+        suf.erase(suf.lower_bound(a[i]-i));
+        ans=max(ans,a[i]+*pref.rbegin()+*suf.rbegin());
+        pref.insert(a[i]+i);
+    }
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

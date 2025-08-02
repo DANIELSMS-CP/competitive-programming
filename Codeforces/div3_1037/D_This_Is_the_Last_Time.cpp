@@ -16,7 +16,7 @@ using namespace std;
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
+const int MOD=1e9+7;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -56,46 +56,63 @@ int mul(int a,int b)
     return ret;
 }
 
-int fast_expo(int a,int p)
+
+struct info
 {
-    if(p==0)
-    {
-        return 1;
-    }
-    if(p==1)
-    {
-        return a;
-    }
-    int pw=fast_expo(a,p/2);
-    if(p%2)
-    {
-        return mul(mul(a,pw),pw);
-    }
-    else
-    {
-        return mul(pw,pw);
-    }
-}
+    int l,r,real;
+};
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    dp[2]=1;
-    for(int i=3;i<=n;i++)
+    int n,k;
+    cin >> n >> k;
+    vector<info> a(n);
+    for(int i=0;i<n;i++)
     {
-        dp[i]=add(dp[i-1],dp[i-2]);
+        cin >> a[i].l >> a[i].r >> a[i].real;
     }
-    int pw=fast_expo(2,n);
-    pw=fast_expo(pw,MOD-2);
-    cout << mul(pw,dp[n]) << '\n';
+    sort(all(a),[&](info a,info b)
+    {
+        if(a.l!=b.l)
+        {
+            return a.l<b.l;
+        }
+        if(a.r!=b.r)
+        {
+            return a.r<b.r;
+        }
+        if(a.real!=b.real)
+        {
+            return a.real<b.real;
+        }
+    }
+    );
+    // for(auto i:a)
+    // {
+    //     cerr << i.l << ' ' << i.r << ' ' << i.real << '\n';
+    // }
+    int mx=k,tmp=k;
+    for(int i=0;i<n;i++)
+    {
+        if(a[i].l<=mx and mx<=a[i].r)
+        {
+            tmp=max(a[i].real,tmp);
+        }
+        else
+        {
+            if(a[i].l<=tmp and tmp<=a[i].r)
+            {
+                mx=tmp;
+                tmp=max(tmp,a[i].real);
+            }
+        }
+    }
+    cout << max(tmp,mx) << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();
