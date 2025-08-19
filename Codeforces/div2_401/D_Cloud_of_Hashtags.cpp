@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,13 +62,53 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    vector<string> a(n);
+    vector<string> ret;
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+    }
+    string s=a[n-1];
+    ret.push_back(s);
+    for(int i=n-2;i>=0;i--)
+    {
+        string outp="";
+        for(int j=0;j<min(sz(s),sz(a[i]));j++)
+        {
+            if(s[j]>a[i][j])
+            {
+                outp+=a[i][j];
+                for(int k=j+1;k<sz(a[i]);k++)
+                {
+                    outp+=a[i][k];
+                }
+                break;
+            }
+            else if(s[j]<a[i][j])
+            {
+                break;
+            }
+            else
+            {
+                outp+=a[i][j];
+            }
+        }
+        ret.push_back(outp);
+        s=outp;
+    }
+    reverse(all(ret));
+    for(auto i:ret)
+    {
+        cout << i << '\n';
+    }
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

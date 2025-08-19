@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,7 +62,62 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    string a,b;
+    cin >> a >> b;
+    int n=sz(a),m=sz(b);
+    int l=m-1;
+    string ans="";
+    for(int i=n-1;i>=0;i--)
+    {
+        if(a[i]>b[l])
+        {
+            if(l-1<0)
+            {
+                cout << "-1\n";
+                return;
+            }
+            string cnts={b[l-1],b[l]};
+            int cnt=stoll(cnts),cnt2=(int)(a[i]-'0');
+            int app=cnt-cnt2;
+            if(app>=10 or app<=0)
+            {
+                cout << "-1\n";
+                return;
+            }
+            string apps=to_string(app);
+            ans+=apps;
+            l-=2;
+        }
+        else
+        {
+            string cnts={b[l]};
+            int cnt=stoll(cnts),cnt2=(int)(a[i]-'0');
+            int app=cnt-cnt2;
+            if(app>=10 or app<0)
+            {
+                cout << "-1\n";
+                return;
+            }
+            string apps=to_string(app);
+            ans+=apps;
+            l--;
+        }
+    }
+    string tmp=ans;
+    while(not tmp.empty() and tmp.back()=='0' and l<0)
+    {
+        tmp.pop_back();
+    }
+    if(not tmp.empty())
+    {
+        ans=tmp;
+    }
+    for(int i=0;i<=l;i++)
+    {
+        cout << b[i];
+    }
+    reverse(all(ans));
+    cout << ans << '\n';
 }
 signed main()
 {

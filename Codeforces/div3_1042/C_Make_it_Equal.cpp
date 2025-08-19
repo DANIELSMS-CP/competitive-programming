@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,7 +62,51 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    int n,k;
+    cin >> n >> k;
+    vector<int> a(n),b(n);
+    map<int,int> cnt,cnt2;
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+        cnt[a[i]%k]++;
+    }
+    for(int i=0;i<n;i++)
+    {
+        cin >> b[i];
+        cnt2[b[i]%k]++;
+    }
+    for(int i=0;i<n;i++)
+    {
+        if(cnt[b[i]%k]>0)
+        {
+            cnt2[b[i]%k]--;
+            cnt[b[i]%k]--;
+        }
+    }
+    map<int,int> cnt3;
+    for(auto [key,val]:cnt)
+    {
+        cnt3[k-key]=cnt[key];
+        cnt[key]=0;
+    }
+    for(int i=0;i<n;i++)
+    {
+        if(cnt3[b[i]%k]>0 and cnt2[b[i]%k]>0)
+        {
+            cnt2[b[i]%k]--;
+            cnt3[b[i]%k]--;
+        }
+    }
+    for(auto [key,val]:cnt2)
+    {
+        if(cnt2[key]>0)
+        {
+            cout << "NO\n";
+            return;
+        }
+    }
+    cout << "YES\n";
 }
 signed main()
 {

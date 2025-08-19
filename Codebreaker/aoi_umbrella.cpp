@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,13 +62,84 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    int n,m;
+    cin >> n >> m;
+    vector<vector<pair<int,int>>> adjlist(n+1);
+    for(int i=0;i<m;i++)
+    {
+        int u,v,w;
+        cin >> u >> v >> w;
+        adjlist[u].push_back({w,v});
+        adjlist[v].push_back({w,u});
+    }
+    queue<int> q;
+    q.push(1);
+    vector<int> bfs_dist(n+1,LLONG_MAX/20);
+    bfs_dist[1]=0;
+    vector<bool> vis(n+1,0);
+    while(not q.empty())
+    {
+        int t=q.front();
+        q.pop();
+        vis[t]=1;
+        for(auto i:adjlist[t])
+        {
+            if(not vis[i.second])
+            {
+                bfs_dist[i.second]=min(bfs_dist[i.second],bfs_dist[t]+1);
+                q.push(i.second);
+            }
+        }
+    }
+    for(auto i:vis)
+    {
+        i=0;
+    }
+    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+    vector<int> dijk_dist(n+1,LLONG_MAX/20);
+    dijk_dist[n]=0;
+    pq.push({0,n});
+    while(not pq.empty())
+    {
+        auto t=pq.top();
+        pq.pop();
+        int node=t.second,weight=t.first;
+        vis[node]=1;
+        for(auto i:adjlist[node])
+        {
+            if(not vis[i.second])
+            {
+                if(dijk_dist[i.second]>dijk_dist[node]+i.first)
+                {
+                    dijk_dist[i.second]=dijk_dist[node]+i.first;
+                    pq.push({dijk_dist[i.second],i.second});
+                }
+            }
+        }
+    }
+    vector<int> min_dist(n+5,LLONG_MAX/20);
+    for(int i=1;i<=n;i++)
+    {
+        min_dist[bfs_dist[i]]=min(min_dist[bfs_dist[i]],dijk_dist[i]);
+    }
+    for(int i=1;i<=n;i++)
+    {
+        if(bfs_dist[n]<=i)
+        {
+            cout << "0 ";
+        }
+        else
+        {
+            cout << min_dist[i] << ' ';
+        }
+    }
+    cout << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

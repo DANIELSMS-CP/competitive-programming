@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,13 +62,33 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    string s;
+    cin >> s;
+    int k;
+    cin >> k;
+    set<char> c;
+    for(int i=0;i<sz(s);i++)
+    {
+        c.insert(s[i]);
+    }
+    if(sz(c)>=k)
+    {
+        cout << "0\n";
+    }
+    else if(k<=sz(s))
+    {
+        cout << k-sz(c) << '\n';
+    }
+    else
+    {
+        cout << "impossible\n";
+    }
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

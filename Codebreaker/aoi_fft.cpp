@@ -1,4 +1,4 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -20,6 +20,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -58,9 +59,40 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
+vector<multiset<int>> st(200005);
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    vector<int> a(n),b(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+    }
+    for(int i=0;i<n;i++)
+    {
+        cin >> b[i];
+        st[a[i]].insert(b[i]);
+    }
+    vector<int> ans;
+    for(int i=0;i<n;i++)
+    {
+        ans.push_back(*st[a[i]].begin());
+        st[a[i]].erase(st[a[i]].begin());
+    }
+    // for(auto i:ans)
+    // {
+    //     cerr << i << ' ';
+    // }
+    // cerr << '\n';
+    if(is_sorted(all(ans)))
+    {
+        cout << "Yes\n";
+    }
+    else
+    {
+        cout << "No\n";
+    }
 }
 signed main()
 {

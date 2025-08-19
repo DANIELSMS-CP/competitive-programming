@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -10,7 +11,7 @@ using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
  
 //defines
-#define int long long
+// #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
 #define sz(x) (int)(x).size()
 #define all(x) begin(x), end(x)
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -58,19 +60,22 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
-void solve()
+long long count_swaps(vector<int> S)
 {
-    
+    return (S[0]<S[1]?0LL:1LL);
 }
 signed main()
 {
     fastio();
-    int t=1;
-    cin >> t;
-    while(t--)
+    int n;
+    cin >> n;
+    n*=2;
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        solve();
+        cin >> a[i];
     }
+    cout << count_swaps(a) << '\n';
 
     return 0;
 }

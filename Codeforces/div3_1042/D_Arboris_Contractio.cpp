@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -60,7 +62,49 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    vector<vector<int>> adjlist(n+1);
+    for(int i=0;i<n-1;i++)
+    {
+        int u,v;
+        cin >> u >> v;
+        adjlist[u].push_back(v);
+        adjlist[v].push_back(u);
+    }
+    vector<int> dist(n+1,0);
+    auto dfs=[&](auto &&dfs,int u,int v)->void
+    {
+        if(sz(adjlist[u])==1)
+        {
+            dist[v]++;
+        }
+        for(auto i:adjlist[u])
+        {
+            if(i!=v)
+            {
+                dfs(dfs,i,u);
+            }
+        }
+    };
+    for(int i=1;i<=n;i++)
+    {
+        if(sz(adjlist[i])>1)
+        {
+            dfs(dfs,i,i);
+            break;
+        }
+    }
+    int ans=LLONG_MAX,cnt=0;
+    for(auto i:dist)
+    {
+        cnt+=i;
+    }
+    for(auto i:dist)
+    {
+        ans=min(ans,cnt-i);
+    }
+    cout << ans << '\n';
 }
 signed main()
 {

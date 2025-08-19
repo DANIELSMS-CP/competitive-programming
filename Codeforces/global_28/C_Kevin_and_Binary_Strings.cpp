@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -58,9 +60,51 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
+struct Ans
+{
+    int a,b,c,d;
+};
 void solve()
 {
-    
+    string s;
+    cin >> s;
+    int n=sz(s);
+    int pos=0;
+    for(int i=0;i<n;i++)
+    {
+        if(s[i]=='0')
+        {
+            pos=i;
+            break;
+        }
+    }
+    string mx="0";
+    Ans ans={1,n,n,n};
+    for(int i=0;i<pos;i++)
+    {
+        string tmp="";
+        string ss="";
+        int poss=n-pos;
+        for(int j=i;j<n and j<poss+i;j++)
+        {
+            ss+=s[j];
+        }
+        int l=sz(ss)-1;
+        for(int j=n-1;j>=pos and l>=0;j--)
+        {
+            tmp+=(s[j]!=ss[l]?'1':'0');
+            l--;
+        }
+        reverse(all(tmp));
+        // debug(mx)
+        // debug(tmp)
+        if(mx<tmp)
+        {
+            mx=tmp;
+            ans={1,n,i+1,i+poss};
+        }
+    }
+    cout << ans.a << ' ' << ans.b << ' ' << ans.c << ' ' << ans.d << '\n';
 }
 signed main()
 {

@@ -1,8 +1,9 @@
-// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
+//and in that light, I find deliverance
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+using namespace std;
 using namespace std;
 using i64 = int64_t;
 using u32 = uint32_t;
@@ -20,6 +21,7 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
+const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -58,15 +60,68 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
+vector<int> prime;
+void pre()
+{
+    int n=1e6;
+    vector<bool> is_prime(n+1, true);
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i <= n; i++) {
+        if (is_prime[i] && (long long)i * i <= n) {
+            for (int j = i * i; j <= n; j += i)
+                is_prime[j] = false;
+        }
+    }
+    for(int i=2;i<=n;i++)
+    {
+        if(is_prime[i])
+        {
+            prime.push_back(i);
+        }
+    }
+}
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+        int l=0,r=sz(prime)-1,ans=0;
+        while(l<=r)
+        {
+            int mid=(l+r)/2;
+            if(prime[mid]*prime[mid]<a[i])
+            {
+                l=mid+1;
+            }
+            else if(prime[mid]*prime[mid]>a[i])
+            {
+                r=mid-1;
+            }
+            else
+            {
+                ans=1;
+                break;
+            }
+        }
+        if(ans==0)
+        {
+            cout << "NO\n";
+        }
+        else
+        {
+            cout << "YES\n";
+        }
+    }
 }
 signed main()
 {
     fastio();
+    pre();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();
