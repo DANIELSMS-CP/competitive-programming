@@ -58,106 +58,28 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
-struct Int
-{
-    int v,w1,w2;
-};
 void solve()
 {
-    int n,m,a,b,c;
-    cin >> n >> m >> a >> b >> c;
-    vector<vector<Int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
-    {
-        int u,v,w1,w2;
-        cin >> u >> v >> w1 >> w2;
-        adjlist[u].push_back({v,w1,w2});
-        adjlist[v].push_back({u,w1,w2});
+    // edi code i dont like this and i dont want to see it again
+    long long k;
+    cin >> k;
+    long long cur = 9, len = 1;
+    while (k - cur * len > 0) {
+        k -= cur * len;
+        cur *= 10;
+        len++;
     }
-    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
-    pq.push({0,a});
-    vector<int> dist(n+1,LLONG_MAX/20),dist2(n+1,LLONG_MAX/20),dist3(n+1,LLONG_MAX/20);
-    dist[a]=0;
-    vector<bool> vis(n+1,0);
-    while(not pq.empty())
-    {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
-        {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
-            {
-                if(dist[t]+i.w1<dist[i.v])
-                {
-                    dist[i.v]=dist[t]+i.w1;
-                    pq.push({dist[i.v],i.v});
-                }
-            }
-        }
-    }
-    for(int i=1;i<=n;i++)
-    {
-        vis[i]=0;
-    }
-    dist2[b]=0;
-    pq.push({0,b});
-    while(not pq.empty())
-    {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
-        {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
-            {
-                if(dist2[t]+i.w1+i.w2<dist2[i.v])
-                {
-                    dist2[i.v]=dist2[t]+i.w1+i.w2;
-                    pq.push({dist2[i.v],i.v});
-                }
-            }
-        }
-    }
-    for(int i=1;i<=n;i++)
-    {
-        vis[i]=0;
-    }
-    dist3[c]=0;
-    pq.push({0,c});
-    while(not pq.empty())
-    {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
-        {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
-            {
-                if(dist3[t]+i.w1<dist3[i.v])
-                {
-                    dist3[i.v]=dist3[t]+i.w1;
-                    pq.push({dist3[i.v],i.v});
-                }
-            }
-        }
-    }
-    int ans=LLONG_MAX;
-    for(int i=1;i<=n;i++)
-    {
-        ans=min(ans,dist[i]+dist2[i]+dist3[i]);
+    string s = to_string(cur / 9 + (k - 1) / len);
+    long long ans = 0;
+    for (int i = 0; i < (k - 1) % len + 1; i++)
+        ans += s[i] - '0';
+    long long pr_s = 0;
+    for (int i = 0; i < s.length(); i++) {
+        int curd = s[i] - '0';
+        if (curd)
+            ans += curd * (len - 1) * cur / 2 + curd * (2 * pr_s + curd - 1) / 2 * cur / 9;
+        cur /= 10, len--;
+        pr_s += curd;
     }
     cout << ans << '\n';
 }
@@ -165,7 +87,7 @@ signed main()
 {
     fastio();
     int t=1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

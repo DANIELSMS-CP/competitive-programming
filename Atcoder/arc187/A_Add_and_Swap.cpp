@@ -58,108 +58,72 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
-struct Int
-{
-    int v,w1,w2;
-};
 void solve()
 {
-    int n,m,a,b,c;
-    cin >> n >> m >> a >> b >> c;
-    vector<vector<Int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n,m;
+    cin >> n >> m;
+    vector<int> a(n);
+    vector<int> ans;
+    for(int i=0;i<n;i++)
     {
-        int u,v,w1,w2;
-        cin >> u >> v >> w1 >> w2;
-        adjlist[u].push_back({v,w1,w2});
-        adjlist[v].push_back({u,w1,w2});
+        cin >> a[i];
     }
-    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
-    pq.push({0,a});
-    vector<int> dist(n+1,LLONG_MAX/20),dist2(n+1,LLONG_MAX/20),dist3(n+1,LLONG_MAX/20);
-    dist[a]=0;
-    vector<bool> vis(n+1,0);
-    while(not pq.empty())
+    if(n==2 and a[0]>a[1] and a[1]+m>a[0])
     {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
+        cout << "No\n";
+        return;
+    }
+    auto Do=[&](int i)
+    {
+        ans.push_back(i);
+        swap(a[i-1],a[i]);
+        a[i-1]+=m;
+    };
+    for(int i=n%2+1;i<n;i+=2)
+    {
+        if(a[i-1]>a[i])
         {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
+            if(a[i]+m<=a[i-1])
             {
-                if(dist[t]+i.w1<dist[i.v])
+                Do(i);
+            }
+            else
+            {
+                if(i>=2)
                 {
-                    dist[i.v]=dist[t]+i.w1;
-                    pq.push({dist[i.v],i.v});
+                    while(a[i]+m>a[i-1])
+                    {
+                        Do(i-1);
+                        Do(i-1);
+                    }
+                    Do(i);
+                }
+                else    
+                {
+                    while(a[i-1]>a[i])
+                    {
+                        Do(i+1);
+                        Do(i+1);
+                    }
                 }
             }
         }
     }
-    for(int i=1;i<=n;i++)
+    for(int i=(n+1)%2+1;i<n;i+=2)
     {
-        vis[i]=0;
-    }
-    dist2[b]=0;
-    pq.push({0,b});
-    while(not pq.empty())
-    {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
+        while(a[i-1]>a[i])
         {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
-            {
-                if(dist2[t]+i.w1+i.w2<dist2[i.v])
-                {
-                    dist2[i.v]=dist2[t]+i.w1+i.w2;
-                    pq.push({dist2[i.v],i.v});
-                }
-            }
+            Do(i+1);
+            Do(i+1);
         }
     }
-    for(int i=1;i<=n;i++)
+    cout << "Yes\n";
+    cout << sz(ans) << '\n';
+    for(auto i:ans)
     {
-        vis[i]=0;
+        cout << i << ' ';
     }
-    dist3[c]=0;
-    pq.push({0,c});
-    while(not pq.empty())
-    {
-        int t=pq.top().second;
-        pq.pop();
-        if(vis[t])
-        {
-            continue;
-        }
-        vis[t]=1;
-        for(auto i:adjlist[t])
-        {
-            if(not vis[i.v])
-            {
-                if(dist3[t]+i.w1<dist3[i.v])
-                {
-                    dist3[i.v]=dist3[t]+i.w1;
-                    pq.push({dist3[i.v],i.v});
-                }
-            }
-        }
-    }
-    int ans=LLONG_MAX;
-    for(int i=1;i<=n;i++)
-    {
-        ans=min(ans,dist[i]+dist2[i]+dist3[i]);
-    }
-    cout << ans << '\n';
+    cout << '\n';
 }
 signed main()
 {
