@@ -1,4 +1,4 @@
-priority_queue<pair<int,int>,vector<int,int>,greater<pair<int,int>>> pq;
+priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
 int start=0;
 vector<int> dist(n+1,inf);
 dist[start]=0;
@@ -6,7 +6,7 @@ while(not pq.empty())
 {
     int topz=pq.top();
     pq.pop();
-    int node-pq.second,weight=pq.first;
+    int node=pq.second,weight=pq.first;
     if(dist[node]<weight)
     {
         continue;
