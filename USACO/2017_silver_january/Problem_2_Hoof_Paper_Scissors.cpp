@@ -1,4 +1,4 @@
-//and in that light, I find deliverance
+// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -10,7 +10,7 @@ using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
  
 //defines
-// #define int long long
+#define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
 #define sz(x) (int)(x).size()
 #define all(x) begin(x), end(x)
@@ -20,7 +20,6 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -59,112 +58,58 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
-struct node
+int dp[100005][22][3];
+void solve()
 {
-    int s,e,m;
-    int val;
-    node *left,*right;
-    node(int ss,int ee,vector<int> &a)
+    int n,kk;
+    cin >> n >> kk;
+    vector<char> a(n+1);
+    for(int i=1;i<=n;i++)
     {
-        s=ss,e=ee;
-        m=(s+e)/2;
-        if(s==e)
-        {
-            val=0;
-            return;
-        }
-        left=new node(s,m,a);
-        right=new node(m+1,e,a);
-        val=left->val+right->val; // !!
+        cin >> a[i];
     }
-    void upd(int p,int v)
+    map<char,int> mp;
+    mp['P']=2;
+    mp['H']=1;
+    mp['S']=0;
+    memset(dp,0,sizeof(dp));
+    for(int i=1;i<=n;i++)
     {
-        if(s==e)
+        for(int j=0;j<=kk;j++)
         {
-            val=v; // !!
-            return;
-        }
-        int m=(s+e)/2;
-        if(p<=m)
-        {
-            left->upd(p,v);
-        }
-        else
-        {
-            right->upd(p,v);
-        }
-        val=left->val+right->val; // !!
-    }
-    long long qry(int l,int r)
-    {
-        if(l>e or r<s)
-        {
-            return 0; // !!
-        }
-        if(l<=s and e<=r)
-        {
-            return val;
-        }
-        return left->qry(l,r)+right->qry(l,r); // !!
-    }
-};
-long long count_swaps(vector<int> s)
-{
-    int n2=s.size();
-    vector<int> targ(n2);
-    vector<bool> vis(n2,false);
-    map<int,queue<int>> idx;
-    for(int i=0;i<n2;i++)
-    {
-        idx[s[i]].push(i);
-    }
-    int p=0;
-    for(int i=0;i<n2;i++)
-    {
-        if(not vis[i])
-        {
-            int match_idx=idx[-s[i]].front();
-            idx[-s[i]].pop();
-            idx[s[i]].pop();
-            if(s[i]<0) // left first
+            for(int k=0;k<3;k++)
             {
-                targ[match_idx]=2*p+1;
-                targ[i]=2*p;
+                dp[i][j][k]=(k==mp[a[i]])+dp[i-1][j][k];
+                if(j>0)
+                {
+                    for(int l=0;l<3;l++)
+                    {
+                        if(l==k)
+                        {
+                            continue;
+                        }
+                        dp[i][j][k]=max(dp[i][j][k],dp[i-1][j-1][l]+(k==mp[a[i]]));
+                    }
+                }
             }
-            else
-            {
-                targ[match_idx]=2*p;
-                targ[i]=2*p+1;
-            }
-            p++;
-            vis[i]=1;
-            vis[match_idx]=1;
+        }   
+    }
+    int ans=0;
+    for(int j=0;j<=kk;j++)
+    {
+        for(int k=0;k<3;k++)
+        {
+            ans=max(ans,dp[n][j][k]);
         }
     }
-    node segtree(0,n2+1,targ);
-    long long ans=0;
-    for(int i=0;i<n2;i++)
-    {
-        ans+=segtree.qry(targ[i]+1,n2);
-        segtree.upd(targ[i],1);
-    }
-    return ans;
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
-    int n;
-    cin >> n;
-    n*=2;
-    vector<int> a(n);
-    for(int i=0;i<n;i++)
-    {
-        cin >> a[i];
-    }
-    cout << count_swaps(a) << '\n';
+    freopen("hps.in", "r", stdin);
+    freopen("hps.out", "w", stdout);
+    solve();
 
     return 0;
 }
-
-
-

@@ -1,4 +1,4 @@
-//and in that light, I find deliverance
+// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -20,7 +20,6 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -59,112 +58,76 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
-struct node
+void solve()
 {
-    int s,e,m;
-    int val;
-    node *left,*right;
-    node(int ss,int ee,vector<int> &a)
+    int n,m;
+    cin >> n >> m;
+    vector<vector<int>> a(n,vector<int>(m));
+    vector<pair<int,int>> vp;
+    for(int i=0;i<n;i++)
     {
-        s=ss,e=ee;
-        m=(s+e)/2;
-        if(s==e)
+        for(int j=0;j<m;j++)
         {
-            val=0;
-            return;
+            cin >> a[i][j];
+            vp.push_back({a[i][j],i});
         }
-        left=new node(s,m,a);
-        right=new node(m+1,e,a);
-        val=left->val+right->val; // !!
     }
-    void upd(int p,int v)
+    sort(all(vp));
+    int l=0,r=1e9,ans=1e9;
+    vector<int> cnt(m,0);
+    while(l<=r)
     {
-        if(s==e)
+        int mid=(l+r)/2;
+        int p=0;
+        int st=0;
+        bool flag=0;
+        for(int i=0;i<n*m;i++)
         {
-            val=v; // !!
-            return;
+            if(cnt[vp[i].second]==0)
+            {
+                st++;
+            }
+            cnt[vp[i].second]++;
+            while(vp[p].first+mid<vp[i].first)
+            {
+                cnt[vp[p].second]--;
+                if(cnt[vp[p].second]==0)
+                {
+                    st--;
+                }
+                p++;
+            }
+            if(st==n)
+            {
+                flag=1;
+            }
         }
-        int m=(s+e)/2;
-        if(p<=m)
+        if(flag)
         {
-            left->upd(p,v);
+            ans=mid;
+            r=mid-1;
         }
         else
         {
-            right->upd(p,v);
+            l=mid+1;
         }
-        val=left->val+right->val; // !!
-    }
-    long long qry(int l,int r)
-    {
-        if(l>e or r<s)
+        while(p<n*m)
         {
-            return 0; // !!
-        }
-        if(l<=s and e<=r)
-        {
-            return val;
-        }
-        return left->qry(l,r)+right->qry(l,r); // !!
-    }
-};
-long long count_swaps(vector<int> s)
-{
-    int n2=s.size();
-    vector<int> targ(n2);
-    vector<bool> vis(n2,false);
-    map<int,queue<int>> idx;
-    for(int i=0;i<n2;i++)
-    {
-        idx[s[i]].push(i);
-    }
-    int p=0;
-    for(int i=0;i<n2;i++)
-    {
-        if(not vis[i])
-        {
-            int match_idx=idx[-s[i]].front();
-            idx[-s[i]].pop();
-            idx[s[i]].pop();
-            if(s[i]<0) // left first
-            {
-                targ[match_idx]=2*p+1;
-                targ[i]=2*p;
-            }
-            else
-            {
-                targ[match_idx]=2*p;
-                targ[i]=2*p+1;
-            }
+            cnt[vp[p].second]--;
             p++;
-            vis[i]=1;
-            vis[match_idx]=1;
         }
     }
-    node segtree(0,n2+1,targ);
-    long long ans=0;
-    for(int i=0;i<n2;i++)
-    {
-        ans+=segtree.qry(targ[i]+1,n2);
-        segtree.upd(targ[i],1);
-    }
-    return ans;
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
-    int n;
-    cin >> n;
-    n*=2;
-    vector<int> a(n);
-    for(int i=0;i<n;i++)
+    int t=1;
+    // cin >> t;
+    while(t--)
     {
-        cin >> a[i];
+        solve();
     }
-    cout << count_swaps(a) << '\n';
 
     return 0;
 }
-
-
-

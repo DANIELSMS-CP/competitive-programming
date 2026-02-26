@@ -1,4 +1,4 @@
-//and in that light, I find deliverance
+// 道草を楽しめ 大いにな。ほしいものより大切なものが きっとそっちに ころがってる
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -10,7 +10,7 @@ using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
  
 //defines
-// #define int long long
+#define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
 #define sz(x) (int)(x).size()
 #define all(x) begin(x), end(x)
@@ -20,7 +20,6 @@ using u128 = __uint128_t; // available on 64-bit targets
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
-const int MOD=998244353;
 const int maxn=2e5+5;
 const double eps=1e-9;
  
@@ -57,114 +56,73 @@ template <typename T, auto M> struct Mod {
     }
 };
  
-using mint = Mod<int, 998244353>;
+using mint = Mod<int, (int)1e9+7>;
 
-struct node
+void solve()
 {
-    int s,e,m;
-    int val;
-    node *left,*right;
-    node(int ss,int ee,vector<int> &a)
+    int n;
+    cin >> n;
+    vector<vector<int>> adjlist(n+1);
+    for(int i=1;i<=n;i++)
     {
-        s=ss,e=ee;
-        m=(s+e)/2;
-        if(s==e)
+        int u,v;
+        cin >> u >> v;
+        if(u!=0 and v!=0)
         {
-            val=0;
+            adjlist[i].push_back(u);
+            adjlist[i].push_back(v);
+            adjlist[u].push_back(i);
+            adjlist[v].push_back(i);
+        }
+    }
+    adjlist[0].push_back(1);
+    adjlist[1].push_back(0);
+    vector<mint> ans(n+1,0);
+    auto dfs=[&](int u,int v,auto &&dfs)->void
+    {
+        if(sz(adjlist[u])==1 and u!=1)
+        {
+            ans[u]=1;
             return;
         }
-        left=new node(s,m,a);
-        right=new node(m+1,e,a);
-        val=left->val+right->val; // !!
-    }
-    void upd(int p,int v)
-    {
-        if(s==e)
+        for(auto i:adjlist[u])
         {
-            val=v; // !!
-            return;
-        }
-        int m=(s+e)/2;
-        if(p<=m)
-        {
-            left->upd(p,v);
-        }
-        else
-        {
-            right->upd(p,v);
-        }
-        val=left->val+right->val; // !!
-    }
-    long long qry(int l,int r)
-    {
-        if(l>e or r<s)
-        {
-            return 0; // !!
-        }
-        if(l<=s and e<=r)
-        {
-            return val;
-        }
-        return left->qry(l,r)+right->qry(l,r); // !!
-    }
-};
-long long count_swaps(vector<int> s)
-{
-    int n2=s.size();
-    vector<int> targ(n2);
-    vector<bool> vis(n2,false);
-    map<int,queue<int>> idx;
-    for(int i=0;i<n2;i++)
-    {
-        idx[s[i]].push(i);
-    }
-    int p=0;
-    for(int i=0;i<n2;i++)
-    {
-        if(not vis[i])
-        {
-            int match_idx=idx[-s[i]].front();
-            idx[-s[i]].pop();
-            idx[s[i]].pop();
-            if(s[i]<0) // left first
+            if(i!=v)
             {
-                targ[match_idx]=2*p+1;
-                targ[i]=2*p;
+                dfs(i,u,dfs);
+                ans[u]+=ans[i]+1;
             }
-            else
-            {
-                targ[match_idx]=2*p;
-                targ[i]=2*p+1;
-            }
-            p++;
-            vis[i]=1;
-            vis[match_idx]=1;
         }
-    }
-    node segtree(0,n2+1,targ);
-    long long ans=0;
-    for(int i=0;i<n2;i++)
+        ans[u]+=1;
+    };
+    dfs(1,0,dfs);
+    auto dfs2=[&](int u,int v,auto &&dfs2)->void
     {
-        ans+=segtree.qry(targ[i]+1,n2);
-        segtree.upd(targ[i],1);
+        ans[u]+=ans[v];
+        for(auto i:adjlist[u])
+        {
+            if(i!=v)
+            {
+                dfs2(i,u,dfs2);
+            }
+        }
+    };
+    dfs2(1,0,dfs2);
+    for(int i=1;i<=n;i++)
+    {
+        cout << ans[i] << ' ';
     }
-    return ans;
+    cout << '\n';
 }
 signed main()
 {
     fastio();
-    int n;
-    cin >> n;
-    n*=2;
-    vector<int> a(n);
-    for(int i=0;i<n;i++)
+    int t=1;
+    cin >> t;
+    while(t--)
     {
-        cin >> a[i];
+        solve();
     }
-    cout << count_swaps(a) << '\n';
 
     return 0;
 }
-
-
-

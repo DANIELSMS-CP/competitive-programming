@@ -75,6 +75,7 @@ class Compare
         {
             return a.w>b.w;
         }
+        return a.u>b.u; 
     }
 };
 struct node
