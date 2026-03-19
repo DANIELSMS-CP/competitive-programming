@@ -4,9 +4,9 @@ vector<int> dist(n+1,inf);
 dist[start]=0;
 while(not pq.empty())
 {
-    int topz=pq.top();
+    auto topz=pq.top();
     pq.pop();
-    int node=pq.second,weight=pq.first;
+    int node=topz.second,weight=topz.first;
     if(dist[node]<weight)
     {
         continue;
