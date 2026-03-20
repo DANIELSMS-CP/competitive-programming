@@ -2,6 +2,7 @@ priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
 int start=0;
 vector<int> dist(n+1,inf);
 dist[start]=0;
+pq.push({0,start});
 while(not pq.empty())
 {
     auto topz=pq.top();
