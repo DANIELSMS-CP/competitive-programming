@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -55,70 +55,96 @@ template <typename T, auto M> struct Mod {
     return y < 0 ? Mod(1) /= ans : ans;
     }
 };
-
-using mint = Mod<int, (int)(1e9+7)>;
+ 
+using mint = Mod<int, 998244353>;
 
 void solve()
 {
     int n,m;
     cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+    }
+    vector<vector<int>> adjlist(n);
     for(int i=0;i<m;i++)
     {
         int u,v;
         cin >> u >> v;
+        u--,v--;
         adjlist[u].push_back(v);
         adjlist[v].push_back(u);
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    vector<vector<int>> new_adj(n);
+    vector<int> stats(n+5,-1);
+    vector<bool> vis(n,0);
+    auto dfs=[&](int u,int x,auto &&dfs)->void
     {
-        if(c%2==0)
-        {
-            ssz++;
-        }
-        else
-        {
-            ssz2++;
-        }
         vis[u]=1;
-        col[u]=c%2;
+        stats[u]=x;
         for(auto i:adjlist[u])
         {
-            if(not vis[i])
+            if(not vis[i] and a[i]==a[u])
             {
-                dfs(i,c+1,dfs);
-            }
-            else
-            {
-                if(col[i]%2==c%2)
-                {
-                    tt=0;
-                }
+                dfs(i,x,dfs);
             }
         }
     };
-    int ans=0;
-    for(int i=1;i<=n;i++)
+    if(a[0]>a[n-1])
     {
-        if(not vis[i])
+        cout << "0\n";
+        return;
+    }
+    int cc=0;
+    for(int i=0;i<n;i++)
+    {
+        if(not vis[i] and a[i]>=a[0] and a[i]<=a[n-1])
         {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
+            dfs(i,cc,dfs);
+            cc++;
         }
     }
-    cout << ans << '\n';
+    for(int i=0;i<n;i++)
+    {
+        for(auto j:adjlist[i])
+        {
+            if(stats[j]!=-1 and stats[i]!=-1 and stats[j]!=stats[i])
+            {
+                if(a[i]>=a[j])
+                {
+                    new_adj[stats[j]].push_back(stats[i]);
+                }
+                else
+                {
+                    new_adj[stats[i]].push_back(stats[j]);
+                }
+            }
+        }
+    }
+    vector<int> dp(n,-1);
+    dp[stats[n-1]]=1;
+    auto run_dp=[&](int u,auto &&run_dp)->int
+    {
+        if(dp[u]!=-1)
+        {
+            return dp[u];
+        }
+        int ans=LLONG_MIN/20;
+        for(auto i:new_adj[u])
+        {
+            ans=max(ans,run_dp(i,run_dp)+1);
+        }
+        return dp[u]=ans;
+    };
+    run_dp(stats[0],run_dp);
+    cout << max(0LL,dp[stats[0]]) << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

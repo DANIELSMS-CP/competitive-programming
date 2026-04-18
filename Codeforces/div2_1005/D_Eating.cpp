@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -55,64 +55,63 @@ template <typename T, auto M> struct Mod {
     return y < 0 ? Mod(1) /= ans : ans;
     }
 };
+ 
+using mint = Mod<int, 998244353>;
 
-using mint = Mod<int, (int)(1e9+7)>;
-
+int get_msb(int x) {
+    if (x == 0) return -1;
+    return 63 - __builtin_clzll(x);
+}
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n,q;
+    cin >> n >> q;
+    vector<int> a(n+1);
+    vector<int> pref(n+1,0);
+    for(int i=1;i<=n;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        cin >> a[i];
+        pref[i]=(pref[i-1]^a[i]);
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    vector<vector<int>> high(n+1,vector<int>(31,0));
+    for(int i=1;i<=n;i++)
     {
-        if(c%2==0)
+        int msb=get_msb(a[i]);
+        for(int b=0;b<=30;b++)
         {
-            ssz++;
+            high[i][b]=((msb>=b)?i:high[i-1][b]);
         }
-        else
+    }
+    while(q--)
+    {
+        int x;
+        cin >> x;
+        int idx=n;
+        while(idx>=1 and x>0)
         {
-            ssz2++;
-        }
-        vis[u]=1;
-        col[u]=c%2;
-        for(auto i:adjlist[u])
-        {
-            if(not vis[i])
+            int msb=get_msb(x);
+            int nxt=high[idx][msb];
+            if(nxt==0)
             {
-                dfs(i,c+1,dfs);
+                idx=0;
+                break;
+            }
+            int range_xor=(pref[idx]^pref[nxt]);
+            int x_after=(x^range_xor);
+            if(a[nxt]>x_after)
+            {
+                idx=nxt;
+                break;
             }
             else
             {
-                if(col[i]%2==c%2)
-                {
-                    tt=0;
-                }
+                x=(x_after^a[nxt]);
+                idx=nxt-1;
             }
         }
-    };
-    int ans=0;
-    for(int i=1;i<=n;i++)
-    {
-        if(not vis[i])
-        {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
-        }
+        cout << n-idx << ' ';
     }
-    cout << ans << '\n';
+    cout << '\n';
 }
 signed main()
 {
@@ -126,3 +125,6 @@ signed main()
 
     return 0;
 }
+
+// 1101
+// 1011

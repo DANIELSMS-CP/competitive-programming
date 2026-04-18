@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -55,64 +55,64 @@ template <typename T, auto M> struct Mod {
     return y < 0 ? Mod(1) /= ans : ans;
     }
 };
-
-using mint = Mod<int, (int)(1e9+7)>;
+ 
+using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        cin >> a[i];
+        a[i]--;
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    vector<int> cnt(n,0),is_last(n,0),last_post(n,-1);
+    for(int i=n-1;i>=0;i--)
     {
-        if(c%2==0)
+        if(cnt[a[i]]==0)
         {
-            ssz++;
+            cnt[a[i]]++;
+            is_last[i]=1;
+            last_post[a[i]]=i;
         }
-        else
+    }
+    vector<int> ans;
+    multiset<int> st;
+    int l=0,r=-1,flag=0;
+    while(r+1<n)
+    {
+        while(r+1<n and (r==-1 or not is_last[r]))
         {
-            ssz2++;
-        }
-        vis[u]=1;
-        col[u]=c%2;
-        for(auto i:adjlist[u])
-        {
-            if(not vis[i])
+            r++;
+            if(is_last[last_post[a[r]]])
             {
-                dfs(i,c+1,dfs);
+                st.insert(a[r]);
             }
-            else
+        }
+        if(st.size())
+        {
+            ans.push_back(flag?*st.begin():*st.rbegin());
+            flag^=1;
+            is_last[last_post[ans.back()]]=0;
+            while(a[l]!=ans.back())
             {
-                if(col[i]%2==c%2)
+                if(auto it=st.find(a[l++]);it!=st.end())
                 {
-                    tt=0;
+                    st.erase(it);
                 }
             }
-        }
-    };
-    int ans=0;
-    for(int i=1;i<=n;i++)
-    {
-        if(not vis[i])
-        {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
+            st.erase(a[l]);
+            l++;
         }
     }
-    cout << ans << '\n';
+    cout << sz(ans) << '\n';
+    for(auto i:ans)
+    {
+        cout << i+1 << ' ';
+    }
+    cout << '\n';
 }
 signed main()
 {

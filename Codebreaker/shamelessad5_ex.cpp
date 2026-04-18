@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -57,68 +57,95 @@ template <typename T, auto M> struct Mod {
 };
 
 using mint = Mod<int, (int)(1e9+7)>;
+struct node {
+    int s, e;
+    mint val; 
+    node *left, *right;
 
+    node(int ss, int ee) : s(ss), e(ee), val(0), left(nullptr), right(nullptr) {}
+
+    void upd(int p, int v) {
+        if (s == e) {
+            val = v;
+            return;
+        }
+
+        int m = s + (e - s) / 2; 
+        if (p <= m) {
+            if (!left) left = new node(s, m);
+            left->upd(p, v);
+        } else {
+            if (!right) right = new node(m + 1, e); 
+            right->upd(p, v);
+        }
+
+        val = (left ? left->val : mint(0)) + (right ? right->val : mint(0));
+    }
+
+    long long qry(int l, int r) {
+        if (l > e || r < s) return 0;
+
+        if (l <= s && e <= r) return val;
+
+        long long res = 0;
+        if (left) res += left->qry(l, r);
+        if (right) res += right->qry(l, r);
+        return res;
+    }
+};
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n;
+    cin >> n;
+    vector<int> a(n+1);
+    int mx=0;
+    for(int i=1;i<=n;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        cin >> a[i];
+        mx=max(mx,a[i]);
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    mint dp[n+1],dp2[n+1];
+    fill(dp,dp+n+1,0);
+    fill(dp2,dp2+n+1,0);
+    node segtree(0,mx+1),segtree2(0,mx+1);
+    set<int> odd,even;
+    segtree.upd(0,1);
+    segtree2.upd(0,1);
+    odd.insert(-1);
+    even.insert(-1);
+    for(int i=1;i<=n;i++)
     {
-        if(c%2==0)
+        if(a[i]%2)
         {
-            ssz++;
+            auto lb=even.lower_bound(a[i]);
+            lb--;
+            int lb2=*lb;
+            dp[i]+=segtree2.qry(0,lb2+1);
+            odd.insert(a[i]);
+            segtree.upd(a[i],dp[i]);
         }
         else
         {
-            ssz2++;
-        }
-        vis[u]=1;
-        col[u]=c%2;
-        for(auto i:adjlist[u])
-        {
-            if(not vis[i])
-            {
-                dfs(i,c+1,dfs);
-            }
-            else
-            {
-                if(col[i]%2==c%2)
-                {
-                    tt=0;
-                }
-            }
-        }
-    };
-    int ans=0;
-    for(int i=1;i<=n;i++)
-    {
-        if(not vis[i])
-        {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
+            auto lb=odd.lower_bound(a[i]);
+            lb--;
+            int lb2=*lb;
+            dp2[i]+=segtree.qry(0,lb2+1);
+            even.insert(a[i]);
+            segtree2.upd(a[i],dp2[i]);
         }
     }
-    cout << ans << '\n';
+    mint sum=0;
+    for(int i=1;i<=n;i++)
+    {
+        sum+=dp[i]+dp2[i];
+    }
+    cout << sum << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

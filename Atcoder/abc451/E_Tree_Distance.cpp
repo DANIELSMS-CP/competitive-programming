@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -55,70 +55,90 @@ template <typename T, auto M> struct Mod {
     return y < 0 ? Mod(1) /= ans : ans;
     }
 };
-
-using mint = Mod<int, (int)(1e9+7)>;
+ 
+using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n;
+    cin >> n;
+    vector<vector<int>> a(n,vector<int>(n,0));
+    for(int i=0;i<n-1;i++)
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        for(int j=i+1;j<n;j++)
+        {
+            cin >> a[i][j];
+        }
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    auto get_dist=[&](int u,int v) 
     {
-        if(c%2==0)
-        {
-            ssz++;
+        if(u==v)
+        { 
+            return 0LL;
         }
-        else
+        if(u>v)
         {
-            ssz2++;
+            swap(u, v);
         }
-        vis[u]=1;
-        col[u]=c%2;
-        for(auto i:adjlist[u])
+        return a[u][v];
+    };
+    vector<vector<int>> par(n);
+    vector<int> parz(n,0);
+    for(int i=1;i<n;i++)
+    {
+        vector<pair<int,int>> valid;
+        for(int j=0;j<n;j++)
         {
-            if(not vis[i])
+            if(i==j)
             {
-                dfs(i,c+1,dfs);
+                continue;
             }
-            else
+            if(get_dist(0,j)+get_dist(i,j)==get_dist(0,i))
             {
-                if(col[i]%2==c%2)
+                valid.push_back({get_dist(i,j),j});
+            }
+        }
+        if(sz(valid)==0)
+        {
+            cout << "No\n";
+            return;
+        }
+        sort(all(valid));
+        par[valid[0].second].push_back(i);
+        par[i].push_back(valid[0].second);
+        parz[i]=valid[0].second;   
+    }
+    for(int i=0;i<n;i++)
+    {
+        vector<int> dist(n,0);
+        auto dfs=[&](int u,int v,auto &&dfs)->void
+        {
+            for(auto i:par[u])
+            {
+                if(i!=v)
                 {
-                    tt=0;
+                    dist[i]=dist[u]+get_dist(i,u);
+                    dfs(i,u,dfs);
                 }
             }
-        }
-    };
-    int ans=0;
-    for(int i=1;i<=n;i++)
-    {
-        if(not vis[i])
+        };
+        dfs(i,-1,dfs);
+        for(int j=0;j<n;j++)
         {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
+            if(dist[j]!=get_dist(i,j))
+            {
+                cout << "No\n";
+                return;
+            }
         }
     }
-    cout << ans << '\n';
+    cout << "Yes\n";
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

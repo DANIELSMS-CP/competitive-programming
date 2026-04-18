@@ -8,7 +8,7 @@ using i64 = int64_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using u128 = __uint128_t; // available on 64-bit targets
-
+ 
 //defines
 #define int long long
 #define debug(x) cerr << "(" << #x << "=" << x << "," << __LINE__ << ")\n";
@@ -16,19 +16,19 @@ using u128 = __uint128_t; // available on 64-bit targets
 #define all(x) begin(x), end(x)
 #define rep(i,a,b) for(int i=a;i<(b);i++)
 #define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);
-
+ 
 //constants
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1}; 
 const char dir[4]{'D','R','U','L'};
 const int maxn=2e5+5;
 const double eps=1e-9;
-
+ 
 //typedefs
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
+ 
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <typename T, auto M> struct Mod {
@@ -55,64 +55,61 @@ template <typename T, auto M> struct Mod {
     return y < 0 ? Mod(1) /= ans : ans;
     }
 };
-
-using mint = Mod<int, (int)(1e9+7)>;
+ 
+using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    vector<vector<int>> adjlist(n+1);
-    for(int i=0;i<m;i++)
+    int n;
+    cin >> n;
+    string a,b;
+    cin >> a >> b;
+    if(a[0]!=b[0] or a[n-1]!=b[n-1])
     {
-        int u,v;
-        cin >> u >> v;
-        adjlist[u].push_back(v);
-        adjlist[v].push_back(u);
+        cout << "-1\n";
+        return;
     }
-    vector<bool> vis(n+1,0);
-    int ssz=0,ssz2=0;
-    vector<int> col(n+1,0);
-    bool tt=1;
-    auto dfs=[&](int u,int c,auto &&dfs)->void
+    vector<int> x(n-1),y(n-1);
+    for(int i=0;i<n-1;i++)
     {
-        if(c%2==0)
-        {
-            ssz++;
-        }
-        else
-        {
-            ssz2++;
-        }
-        vis[u]=1;
-        col[u]=c%2;
-        for(auto i:adjlist[u])
-        {
-            if(not vis[i])
-            {
-                dfs(i,c+1,dfs);
-            }
-            else
-            {
-                if(col[i]%2==c%2)
-                {
-                    tt=0;
-                }
-            }
-        }
-    };
-    int ans=0;
-    for(int i=1;i<=n;i++)
+        x[i]=(a[i]==a[i+1]);
+    }
+    for(int i=0;i<n-1;i++)
     {
-        if(not vis[i])
+        y[i]=(b[i]==b[i+1]);
+    }
+    vector<int> xx,yy;
+    for(int i=0;i<n-1;i++)
+    {
+        if(i%2)
         {
-            ssz=0,ssz2=0;
-            tt=1;
-            dfs(i,0,dfs);
-            ans+=(tt?max(ssz,ssz2):0);
+            x[i]^=1,y[i]^=1;
         }
     }
-    cout << ans << '\n';
+    for(int i=0;i<n-1;i++)
+    {
+        if(x[i]==0)
+        {
+            xx.push_back(i);
+        }
+        if(y[i]==0)
+        {
+            yy.push_back(i);
+        }
+    }
+    if(sz(xx)!=sz(yy))
+    {
+        cout << "-1\n";
+    }
+    else
+    {
+        int ans=0;
+        for(int i=0;i<sz(xx);i++)
+        {
+            ans+=abs(xx[i]-yy[i]);
+        }
+        cout << ans << '\n';
+    }
 }
 signed main()
 {
