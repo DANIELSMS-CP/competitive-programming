@@ -7,18 +7,19 @@ while(not pq.empty())
 {
     auto topz=pq.top();
     pq.pop();
-    int node=topz.second,weight=topz.first;
-    if(dist[node]<weight)
+    int node=topz.second,d=topz.first;
+    if(dist[node]<d)
     {
         continue;
     }
-    for(auto i:adjlist[node])
+    for(auto edge:adjlist[node])
     {
-        int new_dist=dist[node]+weight;
-        if(new_dist<dist[i.second]) // assume i.second is node in the adjlist
+        int new_node = edge.first; 
+        int new_dist = d+edge.second;
+        if(new_dist < dist[new_node])
         {
-            dist[i.second]=new_dist;
-            pq.push({dist[i.second],i.second});
+            dist[new_node]=new_dist;
+            pq.push({dist[new_node], new_node});
         } 
     }
 }
