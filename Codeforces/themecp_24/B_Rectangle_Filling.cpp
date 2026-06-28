@@ -60,28 +60,49 @@ using mint = Mod<int, 998244353>;
 
 void solve()
 {
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    int init=0,p=0;
-    vector<int> ans;
-    ans.push_back(0);
+    int n,m;
+    cin >> n >> m;
+    vector<vector<char>> a(n,vector<char>(m));
     for(int i=0;i<n;i++)
     {
-        if(s[i]=='+')
+        for(int j=0;j<m;j++)
         {
-            init++;
-            ans.push_back(init);
+            cin >> a[i][j];
         }
-        else
+    }
+    int mxx=0,mnx=LLONG_MAX,mxy=0,mny=LLONG_MAX;
+    int mxx2=0,mnx2=LLONG_MAX,mxy2=0,mny2=LLONG_MAX;
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
         {
-            init--;
-            if(init<0)
+            if(a[i][j]=='W')
             {
-                
+                mxx=max(mxx,i);
+                mnx=min(mnx,i);
+                mxy=max(mxy,j);
+                mny=min(mny,j);
+            }
+            else
+            {
+                mxx2=max(mxx2,i);
+                mnx2=min(mnx2,i);
+                mxy2=max(mxy2,j);
+                mny2=min(mny2,j);
             }
         }
+    }
+    if(mnx==0 and mny==0 and mxx==n-1 and mxy==m-1)
+    {
+        cout << "YES\n";
+    }
+    else if(mnx2==0 and mny2==0 and mxx2==n-1 and mxy2==m-1)
+    {
+        cout << "YES\n";
+    }
+    else
+    {
+        cout << "NO\n";
     }
 }
 signed main()
