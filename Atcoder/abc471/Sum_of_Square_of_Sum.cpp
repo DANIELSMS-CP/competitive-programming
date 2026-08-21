@@ -31,9 +31,8 @@ typedef vector<string> vs;
  
 //Template
 template<class T> using oset=tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>;
-// modint template: https://nyaannyaan.github.io/library/modint/modint.hpp.html~
 template <int mod>
-struct Mod {
+struct ModInt {
   int x;
 
   ModInt() : x(0) {}
@@ -109,17 +108,47 @@ struct Mod {
   static constexpr int get_mod() { return mod; }
 };
  
-using mint = Mod<998244353>;
+using mint = ModInt<998244353>;
 
 void solve()
 {
-    
+    int n,k;
+    cin >> n >> k;
+    vector<mint> fact(n+1,mint(1));
+    for(int i=1;i<=n;i++)
+    {
+        fact[i]=fact[i-1]*i;
+    }
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i];
+    }
+    if(k==1)
+    {
+        mint s=0;
+        for(int i=0;i<n;i++)
+        {
+            s+=a[i]*a[i];
+        }
+        cout << s << '\n';
+        return;
+    }
+    mint sum=0;
+    mint ans=0;
+    for(int i=0;i<n;i++)
+    {  
+        ans+=mint(a[i])*mint(a[i])*(fact[n-1]/(fact[k-1]*(fact[n-k])));
+        ans+=mint(2)*mint(sum)*mint(a[i])*(fact[n-2]/(fact[k-2]*fact[n-k]));
+        sum+=a[i];
+    }
+    cout << ans << '\n';
 }
 signed main()
 {
     fastio();
     int t=1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();
