@@ -113,7 +113,47 @@ using mint = ModInt<998244353>;
 
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int cnt0=0,cnt1=0;
+    for(auto i:s)
+    {
+        if(i=='0')
+        {
+            cnt0++;
+        }
+        else
+        {
+            cnt1++;
+        }
+    }
+    int diff=cnt0-cnt1;
+    if(abs(diff)>2)
+    {
+        cout << "-1\n";
+        return;
+    }
+    int sw=0;
+    int cntt0=(s[0]=='0'),cntt1=(s[0]=='1');
+    for(int i=1;i<n;i++)
+    {
+        if(s[i]!=s[i-1])
+        {
+            sw++;
+            if(s[i]=='0')
+            {
+                cntt0++;
+            }
+            else
+            {
+                cntt1++;
+            }
+        }
+    }
+    int diff2=cntt0-cntt1;
+    cout << n-sw+max(0LL,abs(diff-diff2)-1)-1 << '\n';
 }
 signed main()
 {

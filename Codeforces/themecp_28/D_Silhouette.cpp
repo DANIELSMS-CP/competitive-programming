@@ -113,7 +113,53 @@ using mint = ModInt<998244353>;
 
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    vector<pair<int,int>> a(n);
+    vector<int> ans(n);
+    for(int i=0;i<n;i++)
+    {
+        cin >> a[i].first;
+        a[i].second=i;
+    }
+    sort(all(a));
+    if(a[0].first!=0)
+    {
+        cout << "-1\n";
+        return;
+    }
+    int p=0,sum=0,sumz=0;
+    for(int i=1;i<n;i++)
+    {
+        if(a[i].first!=a[i-1].first)
+        {
+            int dist=i-p;
+            int diff=a[i].first-sumz;
+            if(diff%dist!=0 or diff<=sum*dist)
+            {
+                cout << "-1\n";
+                return;
+            }
+            sum=diff/dist;
+            while(p<i)
+            {
+                ans[a[p].second]=sum;
+                sumz+=sum;
+                p++;
+            }
+        }
+    }
+    int mx=*max_element(all(ans));
+    for(auto i:ans)
+    {
+        if(i==0)
+        {
+            cout << mx+1 << ' ';
+            continue;
+        }
+        cout << i << ' ';
+    }
+    cout << '\n';
 }
 signed main()
 {
@@ -127,3 +173,7 @@ signed main()
 
     return 0;
 }
+// 0 4 8
+// 2 2 0 0 0
+
+// 2 2 2 2 0

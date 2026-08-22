@@ -113,7 +113,35 @@ using mint = ModInt<998244353>;
 
 void solve()
 {
-    
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int ans=1;
+    for(int i=1;i<n;i++)
+    {
+        if(s[i]!=s[i-1])
+        {
+            ans++;
+        }
+    }
+    for(int i=1;i<n-1;i++)
+    {
+        if(s[i]!=s[i-1] and s[i]!=s[i+1] and s[i-1]==s[i+1])
+        {
+            cout << ans-2 << '\n';
+            return;
+        }
+    }
+    for(int i=1;i<n-1;i++)
+    {
+        if(s[i]!=s[i-1] and s[i]!=s[i+1])
+        {
+            cout << ans-1 << '\n';
+            return;
+        }
+    }
+    cout << ans << '\n';
 }
 signed main()
 {
