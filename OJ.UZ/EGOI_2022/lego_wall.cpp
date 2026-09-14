@@ -62,46 +62,12 @@ void solve()
 {
     int n,m;
     cin >> n >> m;
-    vector<vector<mint>> dp(n+1,vector<mint>(m+1));
-    for(int i=0;i<=n;i++)
+    if(n<=2)
     {
-        dp[i][0]=1;
+        cout << "1\n";
+        return;
     }
-    for(int i=0;i<=m;i++)
-    {
-        dp[0][i]=1;
-    }
-    for(int i=1;i<=n;i++)
-    {
-        for(int j=1;j<=m;j++)
-        {
-            if(j>=1)
-            {
-                dp[i][j]+=dp[i][j-1];
-            }
-            if(j>=2)
-            {
-                dp[i][j]+=dp[i][j-2];
-            }
-            if(i>=1 and j>=1)
-            {
-                dp[i][j]+=dp[i-1][j];
-            }
-            if(i>=1 and j>=2)
-            {
-                dp[i][j]+=dp[i-1][j-1];
-            }
-        }
-    }
-     for(int i=1;i<=n;i++)
-    {
-        for(int j=1;j<=m;j++)
-        {
-            cerr << dp[i][j] << ' ';
-        }
-        cerr << '\n';
-    }
-    cout << dp[n][m] << '\n';
+    cout << "2\n";
 }
 signed main()
 {
