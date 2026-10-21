@@ -58,27 +58,69 @@ template <typename T, auto M> struct Mod {
  
 using mint = Mod<int, 998244353>;
 
+int sieve[500005];
+void pre()
+{
+    int n=5e5;
+    sieve[0] = sieve[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        if (sieve[i] != 0) continue;
+        for (int j = i; j <= n; j += i)
+            sieve[j] = i;
+    }
+}
 void solve()
 {
     int n,m;
     cin >> n >> m;
     vector<int> a(n),b(m);
+    vector<int> mp(n+m+5);
     for(int i=0;i<n;i++)
     {
         cin >> a[i];
+        mp[a[i]]++;
     }
     for(int i=0;i<m;i++)
     {
         cin >> b[i];
     }
-    for(int i=0;i<n;i++)
+    vector<int> c(n+m+5,0);
+    for(int i=1;i<=n+m;i++)
     {
-        
+        for(int j=1;j*i<=n+m;j++)
+        {
+            c[i*j]+=mp[i];
+        }
+    }
+    int alice=0,bob=0,both=0;
+    for(int i=0;i<m;i++)
+    {
+        if(c[b[i]]==0)
+        {
+            bob++;
+        }
+        else if(c[b[i]]==n)
+        {
+            alice++;
+        }
+        else
+        {
+            both++;
+        }
+    }
+    if(alice+both%2>bob)
+    {
+        cout << "Alice\n";
+    }
+    else
+    {
+        cout << "Bob\n";
     }
 }
 signed main()
 {
     fastio();
+    pre();
     int t=1;
     cin >> t;
     while(t--)
